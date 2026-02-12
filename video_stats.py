@@ -3,6 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 from config import API_KEY, CHANNEL_HANDLE, YT_URL, MAX_RESULTS, BATCH_SIZE
+from datetime import datetime
 
 # Get the playlist ID for the channel's uploads
 def get_playlist_id():
@@ -88,13 +89,20 @@ def get_video_details(video_ids):
     except requests.exceptions.RequestException as e:
         raise e
     
+def save_to_json(video_details):
+    file_path = f"./data/{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+
+    with open(file_path, "w") as json_file:
+        json.dump(video_details, json_file, indent=4, ensure_ascii=False)
+    
 if __name__ == "__main__":
     playlistId = get_playlist_id()
     video_ids = get_video_ids(playlistId)
 
     video_details = get_video_details(video_ids) 
+    save_to_json(video_details)
 
-    print(json.dumps(video_details, indent=4))
+    #print(json.dumps(video_details, indent=4))
 
     print("="*30)
     print(f'Total video IDs fetched: {len(video_ids)}\n')
