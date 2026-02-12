@@ -2,18 +2,13 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
-
-load_dotenv(dotenv_path="./.env")
-
-API_KEY = os.getenv("API_KEY")
-CHANNEL_HANDLE = os.getenv("CHANNEL_HANDLE")
-MAX_RESULTS = 50
+from config import API_KEY, CHANNEL_HANDLE, YT_URL, MAX_RESULTS
 
 # Get the playlist ID for the channel's uploads
 def get_playlist_id():
     try:
 
-        url = f"https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
+        url = f"{YT_URL}channels?part=contentDetails&forHandle={CHANNEL_HANDLE}&key={API_KEY}"
 
         response = requests.get(url)
         response.raise_for_status()
@@ -33,7 +28,7 @@ def get_playlist_id():
     
 def get_video_ids(playlistId):
 
-    base_url = f"https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults={MAX_RESULTS}&playlistId={playlistId}&key={API_KEY}"
+    base_url = f"{YT_URL}playlistItems?part=contentDetails&maxResults={MAX_RESULTS}&playlistId={playlistId}&key={API_KEY}"
     video_ids = []
     pageToken = None
 
@@ -64,7 +59,7 @@ def batch_lists(input_list, batch_size):
         yield input_list[i:i + batch_size]
 
 def get_video_details(video_ids):
-    base_url = f"https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&key={API_KEY}"
+    base_url = f"{YT_URL}videos?part=snippet%2CcontentDetails%2Cstatistics&key={API_KEY}"
     video_details = []
     pageToken = None
 
