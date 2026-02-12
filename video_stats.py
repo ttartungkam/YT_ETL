@@ -69,33 +69,32 @@ def get_video_details(video_ids):
     pageToken = None
 
     try:
-        while True:
-            for batch in batch_lists(video_ids, 50):
-                ids_string = ",".join(batch)
-                url = f"{base_url}&id={ids_string}"
+        for batch in batch_lists(video_ids, 50):
+            ids_string = ",".join(batch)
+            url = f"{base_url}&id={ids_string}"
 
-                response = requests.get(url)
-                response.raise_for_status()
-                data = response.json()
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
 
-                for item in data.get("items", []):
-                    video_info = {
-                        "videoId": item["id"],
-                        "title": item["snippet"]["title"],
-                        #"description": item["snippet"]["description"],
-                        "publishedAt": item["snippet"]["publishedAt"],
-                        "viewCount": item["statistics"].get("viewCount", 0),
-                        "likeCount": item["statistics"].get("likeCount", 0),
-                        "commentCount": item["statistics"].get("commentCount", 0)
-                    }
-                    video_details.append(video_info)
-                
-                pageToken = data.get("nextPageToken")
+            for item in data.get("items", []):
+                video_info = {
+                    "videoId": item["id"],
+                    "title": item["snippet"]["title"],
+                    #"description": item["snippet"]["description"],
+                    "publishedAt": item["snippet"]["publishedAt"],
+                    "viewCount": item["statistics"].get("viewCount", 0),
+                    "likeCount": item["statistics"].get("likeCount", 0),
+                    "commentCount": item["statistics"].get("commentCount", 0)
+                }
+                video_details.append(video_info)
+            
+            pageToken = data.get("nextPageToken")
 
-                if not pageToken:
-                    break
+            if not pageToken:
+                break
 
-            return video_details
+        return video_details
 
     except requests.exceptions.RequestException as e:
         raise e
